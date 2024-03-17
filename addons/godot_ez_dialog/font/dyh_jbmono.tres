@@ -1,0 +1,9 @@
+[gd_resource type="FontVariation" load_steps=3 format=3 uid="uid://bcpktw644umxw"]
+
+[ext_resource type="FontFile" uid="uid://tm4mr7dusfon" path="res://assets/font/JetBrainsMono-2.304/fonts/ttf/JetBrainsMono-Regular.ttf" id="1_5miyf"]
+[ext_resource type="FontFile" uid="uid://bbpq1vabh86xr" path="res://assets/font/smiley-sans-v2.0.1/SmileySans-Oblique.ttf" id="2_rjgn7"]
+
+[resource]
+fallbacks = Array[Font]([ExtResource("2_rjgn7")])
+base_font = ExtResource("1_5miyf")
+spacing_glyph = -1

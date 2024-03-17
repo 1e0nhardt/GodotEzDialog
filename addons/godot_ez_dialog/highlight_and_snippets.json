@@ -1,0 +1,13 @@
+{
+    "highlight": {
+        "d22d72": ["signal"]
+    },
+    "snippets": {
+        "keywords": ["signal"],
+        "snippets": {
+            "choice": "?> choice content -> node",
+            "ifalone": "$if expr {\n\tif-body\n}\n",
+            "ifelse": "$if expr {\n\tif-body\n} $else {\n\telse-body\n}\n"
+        }
+    }
+}

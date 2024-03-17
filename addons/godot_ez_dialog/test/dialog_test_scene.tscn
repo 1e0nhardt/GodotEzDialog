@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3 uid="uid://w66p1xywvvpm"]
+
+[ext_resource type="Script" path="res://addons/godot_ez_dialog/test/dialog_box.gd" id="1_2nhti"]
+[ext_resource type="JSON" path="res://test.json" id="2_hxt18"]
+[ext_resource type="Script" path="res://addons/godot_ez_dialog/dialog_reader.gd" id="2_ig65s"]
+
+[node name="DialogTestScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DialogBox" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(800, 200)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_2nhti")
+dialog_json = ExtResource("2_hxt18")
+
+[node name="DialogReader" type="Node" parent="DialogBox"]
+unique_name_in_owner = true
+script = ExtResource("2_ig65s")

@@ -1,0 +1,150 @@
+[gd_scene load_steps=7 format=3 uid="uid://deaynx1pkjp55"]
+
+[ext_resource type="Script" path="res://addons/godot_ez_dialog/main_screen/main.gd" id="1_ddhwj"]
+[ext_resource type="Script" path="res://addons/godot_ez_dialog/main_screen/dialog_graph_edit.gd" id="2_mayud"]
+[ext_resource type="Script" path="res://addons/godot_ez_dialog/main_screen/dialog_edit.gd" id="3_erc8i"]
+[ext_resource type="FontVariation" uid="uid://cu1y3b7dw4uqd" path="res://addons/godot_ez_dialog/font/syht_jbmono.tres" id="3_lxnxt"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ukr11"]
+bg_color = Color(0.129412, 0.129412, 0.129412, 1)
+
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_wtnga"]
+function_color = Color(0.494118, 0.635294, 0.705882, 1)
+member_variable_color = Color(0.494118, 0.635294, 0.705882, 1)
+
+[node name="Main" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -1.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_ddhwj")
+
+[node name="OpenFileDialog" type="FileDialog" parent="."]
+title = "Open a File"
+initial_position = 2
+size = Vector2i(400, 500)
+ok_button_text = "Open"
+file_mode = 0
+filters = PackedStringArray("*.json")
+
+[node name="SaveFileDialog" type="FileDialog" parent="."]
+title = "Save Dialog"
+initial_position = 2
+size = Vector2i(400, 500)
+ok_button_text = "Save"
+filters = PackedStringArray("*.json")
+
+[node name="HSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="GraphContainer" type="VBoxContainer" parent="HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="TopBar" type="HBoxContainer" parent="HSplitContainer/GraphContainer"]
+layout_mode = 2
+
+[node name="Add" type="Button" parent="HSplitContainer/GraphContainer/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Add"
+
+[node name="Delete" type="Button" parent="HSplitContainer/GraphContainer/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Delete"
+
+[node name="NewBtn" type="Button" parent="HSplitContainer/GraphContainer/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "New"
+
+[node name="SaveBtn" type="Button" parent="HSplitContainer/GraphContainer/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Save"
+
+[node name="OpenBtn" type="Button" parent="HSplitContainer/GraphContainer/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Open"
+
+[node name="DialogNameLabel" type="Label" parent="HSplitContainer/GraphContainer/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "[untitled]"
+vertical_alignment = 1
+
+[node name="DirtyMark" type="Label" parent="HSplitContainer/GraphContainer/TopBar"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+vertical_alignment = 1
+
+[node name="DialogGraphEdit" type="GraphEdit" parent="HSplitContainer/GraphContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("2_mayud")
+
+[node name="EditorContainer" type="VBoxContainer" parent="HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="TitleEdit" type="LineEdit" parent="HSplitContainer/EditorContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_ukr11")
+placeholder_text = "Current Node Title"
+
+[node name="DialogEdit" type="CodeEdit" parent="HSplitContainer/EditorContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.576471, 0.360784, 0.145098, 1)
+theme_override_fonts/font = ExtResource("3_lxnxt")
+theme_override_font_sizes/font_size = 18
+placeholder_text = "content goes here"
+wrap_mode = 1
+caret_blink = true
+syntax_highlighter = SubResource("CodeHighlighter_wtnga")
+code_completion_enabled = true
+indent_use_spaces = true
+indent_automatic = true
+auto_brace_completion_enabled = true
+auto_brace_completion_highlight_matching = true
+script = ExtResource("3_erc8i")
+
+[connection signal="file_selected" from="OpenFileDialog" to="." method="_on_open_file_dialog_file_selected"]
+[connection signal="file_selected" from="SaveFileDialog" to="." method="_on_save_file_dialog_file_selected"]
+[connection signal="pressed" from="HSplitContainer/GraphContainer/TopBar/Add" to="." method="_on_add_pressed"]
+[connection signal="pressed" from="HSplitContainer/GraphContainer/TopBar/Delete" to="." method="_on_delete_pressed"]
+[connection signal="pressed" from="HSplitContainer/GraphContainer/TopBar/NewBtn" to="." method="_on_new_btn_pressed"]
+[connection signal="pressed" from="HSplitContainer/GraphContainer/TopBar/SaveBtn" to="." method="_on_save_btn_pressed"]
+[connection signal="pressed" from="HSplitContainer/GraphContainer/TopBar/OpenBtn" to="." method="_on_open_btn_pressed"]
+[connection signal="delete_nodes_request" from="HSplitContainer/GraphContainer/DialogGraphEdit" to="." method="_on_dialog_graph_edit_delete_nodes_request"]
+[connection signal="end_node_move" from="HSplitContainer/GraphContainer/DialogGraphEdit" to="." method="_on_dialog_graph_edit_end_node_move"]
+[connection signal="node_deselected" from="HSplitContainer/GraphContainer/DialogGraphEdit" to="." method="_on_dialog_graph_edit_node_deselected"]
+[connection signal="node_selected" from="HSplitContainer/GraphContainer/DialogGraphEdit" to="." method="_on_dialog_graph_edit_node_selected"]
+[connection signal="text_submitted" from="HSplitContainer/EditorContainer/TitleEdit" to="." method="_on_title_edit_text_submitted"]
+[connection signal="code_completion_requested" from="HSplitContainer/EditorContainer/DialogEdit" to="." method="_on_dialog_edit_code_completion_requested"]
+[connection signal="text_changed" from="HSplitContainer/EditorContainer/DialogEdit" to="." method="_on_dialog_edit_text_changed"]
+[connection signal="text_changed" from="HSplitContainer/EditorContainer/DialogEdit" to="HSplitContainer/EditorContainer/DialogEdit" method="_on_text_changed"]

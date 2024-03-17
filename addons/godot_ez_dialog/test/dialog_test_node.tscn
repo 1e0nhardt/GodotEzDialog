@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dmvgdjgo7kv7s"]
+
+[ext_resource type="Script" path="res://addons/godot_ez_dialog/test/dialog_test_node.gd" id="1_dor85"]
+
+[node name="DialogTestNode" type="Node"]
+script = ExtResource("1_dor85")

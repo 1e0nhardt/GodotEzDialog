@@ -1,0 +1,9 @@
+[gd_resource type="FontVariation" load_steps=3 format=3 uid="uid://cu1y3b7dw4uqd"]
+
+[ext_resource type="FontFile" uid="uid://tm4mr7dusfon" path="res://assets/font/JetBrainsMono-2.304/fonts/ttf/JetBrainsMono-Regular.ttf" id="1_1wvte"]
+[ext_resource type="FontFile" uid="uid://c2aa8ix3pd7ir" path="res://assets/font/SourceHanSansSC/OTF/SimplifiedChinese/SourceHanSansSC-Regular.otf" id="2_kmbsh"]
+
+[resource]
+fallbacks = Array[Font]([ExtResource("2_kmbsh")])
+base_font = ExtResource("1_1wvte")
+spacing_glyph = -1
