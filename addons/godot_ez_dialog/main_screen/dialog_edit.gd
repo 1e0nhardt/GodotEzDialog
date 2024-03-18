@@ -37,10 +37,12 @@ func _ready():
             syntax_highlighter.add_keyword_color(keyword, Color(color_string, 1.0))
 
     # ${}, ->, signal(...)
-    if Engine.is_editor_hint():
-        syntax_highlighter.add_color_region("${", "}", inject_color)
-        syntax_highlighter.add_color_region("->", "", goto_color)
-        syntax_highlighter.add_color_region("(", ")", signal_color)
+    syntax_highlighter.remove_color_region("${")
+    syntax_highlighter.remove_color_region("->")
+    syntax_highlighter.remove_color_region("(")
+    syntax_highlighter.add_color_region("${", "}", inject_color)
+    syntax_highlighter.add_color_region("->", "", goto_color)
+    syntax_highlighter.add_color_region("(", ")", signal_color)
 
     syntax_highlighter.number_color = number_color
     syntax_highlighter.symbol_color = symbol_color
