@@ -26,11 +26,15 @@ func redraw_dialog_graph():
         childNode.queue_free()
 
     # redraw graph
+    # 添加所有节点
     for dialog_node in dialog_resource.dialog_nodes:
         add_graph_node(dialog_node, false, dialog_node.position)
+
+    # 添加outgoing_connection
+    for dialog_node in dialog_resource.dialog_nodes:
         process_node_outgoing_connections(dialog_node)
-    
-    # set input_connections
+
+    # 设置input_connections
     for dialog_node in dialog_resource.dialog_nodes:
         var gn = get_node(dialog_node.name)
         var output_connections = gn.get_meta("output_connections")
@@ -41,8 +45,9 @@ func redraw_dialog_graph():
             var gnode = get_node(node_name)
             var gnode_input_connections = gnode.get_meta("input_connections")
             if not gnode_input_connections.has(gn.name):
-                gnode_input_connections.append(gn.name)
+                gnode_input_connections.append(str(gn.name)) # gn.name 是StringName类型
 
+    Logger.info("Redraw Dialog Grpah End!")
 
 func add_graph_node(dialog_node: DialogNode, focus = false, position = null):
     var graph_node = GraphNode.new()
@@ -92,17 +97,18 @@ func add_graph_node(dialog_node: DialogNode, focus = false, position = null):
 
 
 func remove_out_going_connection(node_name: String):
-    Logger.debug("=====Remove Out Node=======")
+    # Logger.info("%s Remove Out From" % node_name, get_connection_list())
     for connection in get_connection_list():
         if connection["from_node"] == node_name:
-            Logger.debug("Disconnect %s -> %s" % [node_name, connection["to_node"]])
+            # Logger.debug("Disconnect %s -> %s" % [node_name, connection["to_node"]])
             disconnect_node(node_name, 0, connection["to_node"], 0)
 
 
 func remove_in_going_connection(node_name: String):
+    return
     var graph_node = get_node(NodePath(node_name))
     var input_nodes = graph_node.get_meta("input_connections")
-    Logger.warn("Remove In Node", input_nodes)
+    # Logger.debug("%s Remove In From" % node_name, input_nodes)
     if len(input_nodes) > 0:
         for in_name in input_nodes:
             if not has_node(NodePath(in_name)):
@@ -110,18 +116,14 @@ func remove_in_going_connection(node_name: String):
             var in_node = get_node(NodePath(in_name))
             var output_nodes = in_node.get_meta("output_connections")
             output_nodes.erase(node_name)
-            # remove_out_going_connection(in_node.name)
-            # for out_name in output_nodes:
-            #     connect_node(in_name, 0, out_name, 0)
             disconnect_node(in_name, 0, node_name, 0)
 
 
 func process_node_outgoing_connections(dialog_node: DialogNode):
     remove_out_going_connection(dialog_node.name)
     for out_node in dialog_node.get_destination_nodes():
-        var out_dn = dialog_resource.get_node_by_name(out_node)
-        if out_dn:
-            connect_node(dialog_node.name, 0, out_dn.name, 0)
+        if has_node(NodePath(out_node)):
+            connect_node(dialog_node.name, 0, out_node, 0)
 
 
 func select_node(node: Node):
@@ -133,11 +135,11 @@ func deselect_node(node: Node):
 
 
 func remove_node(node: Node):
-    Logger.debug("Remove Node")
+    Logger.debug("Remove Node %s" % node.name)
     selected_nodes.erase(node)
     remove_in_going_connection(node.name)
     remove_out_going_connection(node.name)
-    node.free()
+    node.queue_free()
     # notify_property_list_changed()
 
 
@@ -157,11 +159,20 @@ func update_selected_node(new_name: String):
     dialog_node.name = new_name
 
 
-func reconnect_valid_connection(new_name):
+func reconnect_valid_connection(new_name: String):
+    var new_node = get_node(NodePath(new_name))
     for node in dialog_resource.dialog_nodes:
-        if not has_node(node.name):
+        if not has_node(NodePath(node.name)):
             continue
-        
+
         var gn = get_node(NodePath(node.name))
         if gn.get_meta("output_connections").has(new_name):
             connect_node(node.name, 0, new_name, 0)
+            if not new_node.get_meta("input_connections").has(node.name):
+                new_node.get_meta("input_connections").append(str(node.name))
+
+
+func remove_old_connections(old_name: String):
+    for con in get_connection_list():
+        if con["from_node"] == old_name or con["to_node"] == old_name:
+            disconnect_node(con["from_node"], con["from_port"], con["to_node"], con["to_port"])

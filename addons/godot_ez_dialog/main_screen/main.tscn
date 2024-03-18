@@ -126,6 +126,7 @@ placeholder_text = "content goes here"
 wrap_mode = 1
 caret_blink = true
 syntax_highlighter = SubResource("CodeHighlighter_wtnga")
+symbol_lookup_on_click = true
 code_completion_enabled = true
 indent_use_spaces = true
 indent_automatic = true
@@ -146,5 +147,7 @@ script = ExtResource("3_erc8i")
 [connection signal="node_selected" from="HSplitContainer/GraphContainer/DialogGraphEdit" to="." method="_on_dialog_graph_edit_node_selected"]
 [connection signal="text_submitted" from="HSplitContainer/EditorContainer/TitleEdit" to="." method="_on_title_edit_text_submitted"]
 [connection signal="code_completion_requested" from="HSplitContainer/EditorContainer/DialogEdit" to="." method="_on_dialog_edit_code_completion_requested"]
+[connection signal="symbol_lookup" from="HSplitContainer/EditorContainer/DialogEdit" to="." method="_on_dialog_edit_symbol_lookup"]
+[connection signal="symbol_validate" from="HSplitContainer/EditorContainer/DialogEdit" to="." method="_on_dialog_edit_symbol_validate"]
 [connection signal="text_changed" from="HSplitContainer/EditorContainer/DialogEdit" to="." method="_on_dialog_edit_text_changed"]
 [connection signal="text_changed" from="HSplitContainer/EditorContainer/DialogEdit" to="HSplitContainer/EditorContainer/DialogEdit" method="_on_text_changed"]

@@ -36,15 +36,8 @@ func _ready():
     is_dirty = false
 
 
-func _process(delta):
-    var time_since_last_update = Time.get_ticks_msec() - last_parse_updated_time
-    if time_since_last_update > config["PARSE_UPDATE_WAIT_TIME_IN_MS"]:
-        update_parse()
-        last_parse_updated_time = Time.get_ticks_msec()
-
-
-func save():
-    if !is_dirty:
+func save(force = false):
+    if !is_dirty and !force:
         return
 
     update_parse()
@@ -71,7 +64,7 @@ func add_node(node_name = "Dialog Node"):
     dialog_graph_edit.add_graph_node(dialog_node, true)
 
 
-func update_parse():
+func update_parse(old_name = ""):
     var selected_dn = dialog_graph_edit.selected_dialog_node
     if not selected_dn:
         return
@@ -82,21 +75,38 @@ func update_parse():
 
     var old_outputs = editing_node.get_meta("output_connections")
     var new_outputs = selected_dn.get_destination_nodes()
-    Logger.debug("GOTO", new_outputs)
     editing_node.set_meta("output_connections", new_outputs)
+    Logger.info("GOTO", new_outputs)
 
-    #TODO 环?
-    if editing_node.get_meta("input_connections").has(editing_node.name) and not new_outputs.has(editing_node.name):
-        editing_node.get_meta("input_connections").erase(editing_node.name)
+    if old_name != "": # 节点重命名时
+         #TODO 环?
+        if editing_node.get_meta("input_connections").has(old_name):
+            editing_node.get_meta("input_connections").erase(old_name)
+            editing_node.get_meta("input_connections").append(editing_node.name)
+        for node_name in new_outputs:
+            if not dialog_graph_edit.has_node(node_name):
+                continue
+            var gnode = dialog_graph_edit.get_node(node_name)
+            var gnode_input_connections = gnode.get_meta("input_connections")
+            Logger.debug("Node %s: Erase %s, Append %s" %[gnode.name, old_name, editing_node.name])
+            # Logger.info("IN CONN", gnode_input_connections)
+            gnode_input_connections.erase(old_name) #? 不起作用。 原因是input_connections添加的是node.name，是StringName类型。
+            # Logger.info("IN CONN", gnode_input_connections)
+            gnode_input_connections.append(str(editing_node.name)) # 添加时将StringName转为String
+            # Logger.info("IN CONN", gnode_input_connections)
+    else:
+        #TODO 环?
+        if editing_node.get_meta("input_connections").has(editing_node.name) and not new_outputs.has(editing_node.name):
+            editing_node.get_meta("input_connections").erase(editing_node.name)
 
-    for node_name in new_outputs:
-        # 尚未添加的目标节点
-        if not dialog_graph_edit.has_node(node_name):
-            continue
-        var gnode = dialog_graph_edit.get_node(node_name)
-        var gnode_input_connections = gnode.get_meta("input_connections")
-        if not gnode_input_connections.has(editing_node.name):
-            gnode_input_connections.append(editing_node.name)
+        for node_name in new_outputs:
+            # 尚未添加的目标节点
+            if not dialog_graph_edit.has_node(node_name):
+                continue
+            var gnode = dialog_graph_edit.get_node(node_name)
+            var gnode_input_connections = gnode.get_meta("input_connections")
+            if not gnode_input_connections.has(editing_node.name):
+                gnode_input_connections.append(str(editing_node.name)) # 添加时将StringName转为String
 
     dialog_graph_edit.process_node_outgoing_connections(selected_dn)
 
@@ -159,9 +169,7 @@ func _on_open_file_dialog_file_selected(path):
 
 #region Dialog Graph Signals
 func _on_dialog_graph_edit_node_selected(node: Node):
-    Logger.debug("Selected Node: %s" % node.name)
-    Logger.debug("Selected Node In", node.get_meta("input_connections"))
-    Logger.debug("Selected Node Out", node.get_meta("output_connections"))
+    Logger.info("Selected Node: %s, In: %s, Out: %s" % [node.name, node.get_meta("input_connections"), node.get_meta("output_connections")])
     dialog_graph_edit.select_node(node)
     _populate_editor_from_selected_node()
 
@@ -190,18 +198,36 @@ func _on_dialog_graph_edit_delete_nodes_request(nodes: Array[StringName]):
 #region Text Edit Signals
 func _on_title_edit_text_submitted(new_text):
     var valid_name = dialog_resource.validate_name(new_text)
+    var old_name = dialog_graph_edit.selected_dialog_node.name
     dialog_graph_edit.update_selected_node(valid_name)
+    update_parse(old_name) # 重新处理相关节点的meta数据
+    dialog_graph_edit.remove_old_connections(old_name) # 避免出现get_node报错
+    is_dirty = true
     if new_text != valid_name:
         push_warning("Name [%s] existing, change to [%s]." % [new_text, valid_name])
         title_edit.text = valid_name
 
 
-func _on_dialog_edit_code_completion_requested():
-    pass # Replace with function body.
-
-
 func _on_dialog_edit_text_changed():
     if content_edit.has_focus():
-        is_dirty = true
         dialog_graph_edit.selected_dialog_node.commands_raw = content_edit.text
+        is_dirty = true
+        update_parse()
+
+
+func _on_dialog_edit_symbol_lookup(symbol:String, line:int, column:int):
+    #? 按住Ctrl+click node时，有时候symbol_lookup不生效，需要多试几次才行。
+    # Logger.debug("Symbol Lookup", symbol)
+    if dialog_graph_edit.has_node(NodePath(symbol)):
+        var goto_node = dialog_graph_edit.get_node(NodePath(symbol))
+        dialog_graph_edit.set_selected(goto_node)
+    else:
+        add_node(symbol)
+        dialog_graph_edit.reconnect_valid_connection(symbol)
+
+
+func _on_dialog_edit_symbol_validate(symbol:String):
+    if dialog_graph_edit.has_node(NodePath(symbol)) or dialog_graph_edit.selected_dialog_node.get_destination_nodes().has(symbol):
+        # Logger.debug("Symbol Validate", symbol)
+        content_edit.set_symbol_lookup_word_as_valid(true)
 #endregion
