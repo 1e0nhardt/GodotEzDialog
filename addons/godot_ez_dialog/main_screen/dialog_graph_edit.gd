@@ -153,10 +153,11 @@ func update_selected_node(new_name: String):
     var dialog_node = selected_dialog_node
     var old_name = graph_node.name
     remove_in_going_connection(old_name)
-    reconnect_valid_connection(new_name)
     graph_node.title = new_name
     graph_node.name = new_name
     dialog_node.name = new_name
+    # 先改名，再reconnect。否则新建节点重命名时new_name节点为空
+    reconnect_valid_connection(new_name)
 
 
 func reconnect_valid_connection(new_name: String):
