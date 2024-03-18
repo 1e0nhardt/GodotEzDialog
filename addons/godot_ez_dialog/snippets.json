@@ -1,0 +1,8 @@
+{
+    "keywords": ["signal", "elif", "endif", "else"],
+    "snippets": {
+        "ifalone": "if expr:\n\tbody\nendif\n",
+        "ifel": "if expr:\n\tbody\nelse:\n\tbody\nendif\n",
+        "ififel": "if expr:\n\tbody\nelif expr:\n\tbody\nelse:\n\tbody\nendif\n"
+    }
+}

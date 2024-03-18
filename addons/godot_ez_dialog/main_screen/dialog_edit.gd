@@ -1,9 +1,12 @@
 @tool
 extends CodeEdit
 
-const highlight_and_snippet_file = "res://addons/godot_ez_dialog/highlight_and_snippets.json"
+const highlight_and_snippet_file = "res://addons/godot_ez_dialog/snippets.json"
 
-var highlight_dict
+var highlight_dict = {
+    "d22d72": ["signal"],
+    "89c4ee": ["if", "elif", "endif", "else"]
+}
 var snippets_dict
 
 var inject_color = Color("d22d72", 1.0)
@@ -11,7 +14,6 @@ var goto_color = Color("2d8f6f", 1.0)
 var signal_color = Color("d22d72", 1.0)
 var number_color = Color("568c3b", 1.0)
 var symbol_color = Color("6b6bb8", 1.0)
-
 
 func load_json_file(filepath: String):
     if FileAccess.file_exists(filepath):
@@ -27,9 +29,7 @@ func load_json_file(filepath: String):
 
 
 func _ready():
-    var json_dict = load_json_file(highlight_and_snippet_file)
-    highlight_dict = json_dict.get("highlight", {})
-    snippets_dict = json_dict.get("snippets", {})
+    snippets_dict = load_json_file(highlight_and_snippet_file)
 
     # 关键词高亮
     for color_string in highlight_dict:

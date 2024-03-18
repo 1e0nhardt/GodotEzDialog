@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://w66p1xywvvpm"]
 
 [ext_resource type="Script" path="res://addons/godot_ez_dialog/test/dialog_box.gd" id="1_2nhti"]
-[ext_resource type="JSON" path="res://test.json" id="2_hxt18"]
+[ext_resource type="JSON" path="res://addons/godot_ez_dialog/test/test.json" id="2_agyhc"]
 [ext_resource type="Script" path="res://addons/godot_ez_dialog/dialog_reader.gd" id="2_ig65s"]
 
 [node name="DialogTestScene" type="Control"]
@@ -26,7 +26,7 @@ offset_right = 20.0
 grow_horizontal = 2
 grow_vertical = 0
 script = ExtResource("1_2nhti")
-dialog_json = ExtResource("2_hxt18")
+dialog_json = ExtResource("2_agyhc")
 
 [node name="DialogReader" type="Node" parent="DialogBox"]
 unique_name_in_owner = true

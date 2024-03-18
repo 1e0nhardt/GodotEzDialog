@@ -12,8 +12,15 @@ config_version=5
 
 config/name="GodotEzDialog"
 config/features=PackedStringArray("4.2", "Forward Plus")
-config/icon="res://icon.svg"
 
 [autoload]
 
-Logger="*res://autoloads/logger.gd"
+Logger="*res://addons/godot_ez_dialog/logger.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot_ez_dialog/plugin.cfg")
+
+[internationalization]
+
+locale/translations_pot_files=PackedStringArray("res://t.dialogue")

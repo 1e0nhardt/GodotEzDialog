@@ -5,15 +5,17 @@ const MainPanel = preload("res://addons/godot_ez_dialog/main_screen/main.tscn")
 const PLUGIN_NAME = "EzDialog"
 const DIALOGUE_NODE_NAME = "EzDialogReader"
 const ICON = preload("icon.svg")
+const AUTOLOAD_LOGGER = "Logger"
 
 var main_panel_instance: MainDialogPanel
 
 
 func _enter_tree():
     add_custom_type(DIALOGUE_NODE_NAME, "Node", preload("dialog_reader.gd"), ICON)
+    add_autoload_singleton(AUTOLOAD_LOGGER, "res://addons/godot_ez_dialog/logger.gd")
 
     main_panel_instance = MainPanel.instantiate()
-        
+
     # Add the main panel to the editor's main viewport.
     EditorInterface.get_editor_main_screen().add_child(main_panel_instance)
 
@@ -23,6 +25,7 @@ func _enter_tree():
 
 func _exit_tree():
     remove_custom_type(DIALOGUE_NODE_NAME)
+    remove_autoload_singleton(AUTOLOAD_LOGGER)
     if main_panel_instance:
         main_panel_instance.queue_free()
 

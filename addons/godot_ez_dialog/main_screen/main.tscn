@@ -9,8 +9,22 @@
 bg_color = Color(0.129412, 0.129412, 0.129412, 1)
 
 [sub_resource type="CodeHighlighter" id="CodeHighlighter_wtnga"]
+number_color = Color(0.337255, 0.54902, 0.231373, 1)
+symbol_color = Color(0.419608, 0.419608, 0.721569, 1)
 function_color = Color(0.494118, 0.635294, 0.705882, 1)
 member_variable_color = Color(0.494118, 0.635294, 0.705882, 1)
+keyword_colors = {
+"elif": Color(0.537255, 0.768627, 0.933333, 1),
+"else": Color(0.537255, 0.768627, 0.933333, 1),
+"endif": Color(0.537255, 0.768627, 0.933333, 1),
+"if": Color(0.537255, 0.768627, 0.933333, 1),
+"signal": Color(0.823529, 0.176471, 0.447059, 1)
+}
+color_regions = {
+"${ }": Color(0.823529, 0.176471, 0.447059, 1),
+"( )": Color(0.823529, 0.176471, 0.447059, 1),
+"->": Color(0.176471, 0.560784, 0.435294, 1)
+}
 
 [node name="Main" type="Panel"]
 anchors_preset = 15

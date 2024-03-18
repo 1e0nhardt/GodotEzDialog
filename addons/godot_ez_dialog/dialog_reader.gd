@@ -27,14 +27,14 @@ func _process(delta):
                     response.eod_reached = true
                 break
 
-            process_command(executing_command_stack.pop_front(), response)
+            _process_command(executing_command_stack.pop_front(), response)
 
         dialog_generated.emit(response)
 
 
 # 加载初始对话节点
 func start_dialog(dialog: JSON, state: Dictionary, starting_node_name = "start"):
-    load_dialog(dialog)
+    _load_dialog(dialog)
     var starting_node = processing_dialog.get_node_by_name(starting_node_name)
     executing_command_stack = starting_node.get_parse()
     pending_choice_actions = []
@@ -44,7 +44,7 @@ func start_dialog(dialog: JSON, state: Dictionary, starting_node_name = "start")
 
 
 # 缓存+反序列化
-func load_dialog(dialog: JSON):
+func _load_dialog(dialog: JSON):
     if !resource_cache.has(dialog.resource_path):
         var dialog_graph = DialogResource.new()
         dialog_graph.loadFromJson(dialog.data)
@@ -73,16 +73,14 @@ func next(choice_index: int = 0):
 
 
 # 处理命令
-func process_command(command: DialogCommand, response: DialogResponse):
+func _process_command(command: DialogCommand, response: DialogResponse):
     if command.type == DialogCommand.Type.ROOT:
-        queue_executing_commands(command.children)
+        _queue_executing_commands(command.children)
     elif command.type == DialogCommand.Type.SIGNAL: # 发送一次信号
         var signalValue = command.values[0]
         custom_signal_received.emit(signalValue)
-    elif command.type == DialogCommand.Type.BRACKET:
-        queue_executing_commands(command.children)
     elif command.type == DialogCommand.Type.DISPLAY_TEXT: # 生成变量注入后的文本
-        var display_text: String = inject_variable_to_text(command.values[0].strip_edges(true,true))
+        var display_text: String = _inject_variable_to_text(command.values[0].strip_edges(true,true))
         # normal text display
         response.append_text(display_text)
     elif command.type == DialogCommand.Type.PAGE_BREAK: # 停止命令处理，直接输出已处理的对话
@@ -91,7 +89,7 @@ func process_command(command: DialogCommand, response: DialogResponse):
     elif command.type == DialogCommand.Type.PROMPT: # 生成选择文本，并将其子命令数组放到pending_choice_actions数组的相应位置
         # choice item
         var actions: Array[DialogCommand] = []
-        var prompt: String = inject_variable_to_text(command.values[0])
+        var prompt: String = _inject_variable_to_text(command.values[0])
         actions.append_array(command.children)
         response.append_choice(prompt.strip_edges())
         pending_choice_actions.push_back(actions)
@@ -105,20 +103,19 @@ func process_command(command: DialogCommand, response: DialogResponse):
             dialog_visit_history.remove_at(-1)
     elif command.type == DialogCommand.Type.IF or command.type == DialogCommand.Type.ELIF: # 表达式估值，丢弃目标命令
         var expression = command.values[0]
-        var result = evaluate_conditional_expression(expression)
+        var result = _evaluate_conditional_expression(expression)
         if result:
             while (!executing_command_stack.is_empty() and
                 (executing_command_stack[0].type == DialogCommand.Type.ELSE
                 or executing_command_stack[0].type == DialogCommand.Type.ELIF)):
                 executing_command_stack.pop_front()
-            queue_executing_commands(command.children, true)
+            _queue_executing_commands(command.children, true)
     elif command.type == DialogCommand.Type.ELSE:
-        queue_executing_commands(command.children, true)
+        _queue_executing_commands(command.children, true)
 
 
 # 将${var}替换为变量值 用正则匹配所有var，然后从_state_refence(用户传入)从读值。
-func inject_variable_to_text(text: String):
-    # replacing variable placeholders
+func _inject_variable_to_text(text: String):
     var required_variables: Array[String] = []
     var variable_placeholder_regex = RegEx.new()
     variable_placeholder_regex.compile("\\${(\\S+?)}")
@@ -137,7 +134,7 @@ func inject_variable_to_text(text: String):
 
 
 # 将if-else {}内的子命令加入执行队列
-func queue_executing_commands(commands: Array[DialogCommand], mark_conditional_goto = false):
+func _queue_executing_commands(commands: Array[DialogCommand], mark_conditional_goto = false):
     var copy = commands.duplicate(true)
     copy.append_array(executing_command_stack)
     executing_command_stack = copy
@@ -147,7 +144,7 @@ func queue_executing_commands(commands: Array[DialogCommand], mark_conditional_g
                 cmd.values.append("conditional_goto")
 
 
-func evaluate_conditional_expression(expression: String):
+func _evaluate_conditional_expression(expression: String):
     # initial version of conditional expression...
     # only handle order of operation and && and ||
     var properties = state_reference.keys()

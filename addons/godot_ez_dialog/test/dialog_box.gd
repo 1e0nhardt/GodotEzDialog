@@ -40,10 +40,10 @@ func add_choice(text: String, index: int):
 
 func on_dialog_generated(response: DialogResponse):
     clear_dialog()
-    if response.text.is_empty():
+    if response.text == "":
         Logger.info("Dialog Ended!")
         return
-        
+
     add_text(response.text)
     if not response.choices.is_empty():
         for i in response.choices.size():
@@ -56,6 +56,4 @@ func on_dialog_generated(response: DialogResponse):
 func on_custom_signal_received(param_string: String):
     var params = param_string.split(",")
     if params[0].strip_edges() == "set":
-        print(state)
-        print(params[1])
         state[params[1].strip_edges()] = params[2].strip_edges()

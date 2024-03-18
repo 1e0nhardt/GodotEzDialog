@@ -76,7 +76,7 @@ func update_parse(old_name = ""):
     var old_outputs = editing_node.get_meta("output_connections")
     var new_outputs = selected_dn.get_destination_nodes()
     editing_node.set_meta("output_connections", new_outputs)
-    Logger.info("GOTO", new_outputs)
+    # Logger.info("GOTO", new_outputs)
 
     if old_name != "": # 节点重命名时
          #TODO 环?
@@ -88,7 +88,7 @@ func update_parse(old_name = ""):
                 continue
             var gnode = dialog_graph_edit.get_node(node_name)
             var gnode_input_connections = gnode.get_meta("input_connections")
-            Logger.debug("Node %s: Erase %s, Append %s" %[gnode.name, old_name, editing_node.name])
+            # Logger.debug("Node %s: Erase %s, Append %s" %[gnode.name, old_name, editing_node.name])
             # Logger.info("IN CONN", gnode_input_connections)
             gnode_input_connections.erase(old_name) #? 不起作用。 原因是input_connections添加的是node.name，是StringName类型。
             # Logger.info("IN CONN", gnode_input_connections)
@@ -175,14 +175,14 @@ func _on_dialog_graph_edit_node_selected(node: Node):
 
 
 func _on_dialog_graph_edit_node_deselected(node: Node):
-    Logger.debug("Deselected Node: %s" % node.name)
+    # Logger.debug("Deselected Node: %s" % node.name)
     dialog_graph_edit.deselect_node(node)
     _populate_editor_from_selected_node()
 
 
 func _on_dialog_graph_edit_end_node_move():
     for node in dialog_graph_edit.selected_nodes:
-        Logger.debug("%s position_offset" % node.name, node.position_offset)
+        # Logger.debug("%s position_offset" % node.name, node.position_offset)
         dialog_resource.get_node_by_name(node.name).position = node.position_offset
 
     is_dirty = true
@@ -190,7 +190,7 @@ func _on_dialog_graph_edit_end_node_move():
 
 func _on_dialog_graph_edit_delete_nodes_request(nodes: Array[StringName]):
     for node_name in nodes:
-        Logger.debug("Delete Node Name", node_name)
+        # Logger.debug("Delete Node Name", node_name)
         _delete_node_by_name(node_name)
     _populate_editor_from_selected_node()
 #endregion
