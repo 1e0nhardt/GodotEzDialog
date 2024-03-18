@@ -124,8 +124,15 @@ theme_override_constants/separation = 0
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_lxnxt")
+theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_ukr11")
 placeholder_text = "Current Node Title"
+alignment = 1
+context_menu_enabled = false
+shortcut_keys_enabled = false
+middle_mouse_paste_enabled = false
+select_all_on_focus = true
 
 [node name="DialogEdit" type="CodeEdit" parent="HSplitContainer/EditorContainer"]
 unique_name_in_owner = true
