@@ -81,8 +81,9 @@ func _process_command(command: DialogCommand, response: DialogResponse):
     if command.type == DialogCommand.Type.ROOT:
         _queue_executing_commands(command.children)
     elif command.type == DialogCommand.Type.SIGNAL: # 发送一次信号
-        var signalValue = command.values[0]
-        custom_signal_received.emit(signalValue)
+        var signal_value = command.values[0]
+        if not built_in_signal_process(signal_value):
+            custom_signal_received.emit(signal_value)
     elif command.type == DialogCommand.Type.DISPLAY_TEXT: # 生成变量注入后的文本
         var display_text: String = _inject_variable_to_text(command.values[0].strip_edges(true,true))
         # normal text display
@@ -161,8 +162,47 @@ func _evaluate_conditional_expression(expression: String):
 
     var parse_error = evaluation.parse(expression, PackedStringArray(available_variables))
     var result = evaluation.execute(variable_values)
-    if evaluation.has_execute_failed():
+    if evaluation.has_execute_failed() or evaluation.get_error_text():
         printerr("Conditional expression '%s' did not parse/execute correctly with state: %s"%[expression, variable_values])
         # failed expression statement is assumed falsy.
         return false
     return result
+
+
+func built_in_signal_process(signal_value: String):
+    var params = signal_value.split(",")
+    if params.size() != 3:
+        return false
+
+    var method_name = params[0].strip_edges()
+    var variable_name = params[1].strip_edges()
+    var value_string = params[2].strip_edges()
+
+    if Util.BUILT_IN_METHOD_IN_SIGNAL.find(method_name) == -1:
+        return false
+    
+    if not state_reference.has(variable_name):
+        Logger.warn("invalid variable name '%s', '%s' will send by signal." % [variable_name, signal_value])
+        return false
+
+    var expression = Expression.new()
+    expression.parse(value_string)
+    var value = _evaluate_conditional_expression(value_string)
+
+    if !value and typeof(value) == TYPE_BOOL:
+        Logger.warn("expression '%s' did not parse/execute correctly, '%s' will send by signal." % [value_string, signal_value])
+        return false
+
+    match Util.BUILT_IN_METHOD_IN_SIGNAL.find(method_name):
+        Util.MethodType.SET:
+            state_reference[variable_name] = value
+        Util.MethodType.ADD:
+            state_reference[variable_name] += value
+        Util.MethodType.MINUS:
+            state_reference[variable_name] -= value
+        Util.MethodType.MUL:
+            state_reference[variable_name] *= value
+        _:
+            return false
+    
+    return true

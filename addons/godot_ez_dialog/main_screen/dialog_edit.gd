@@ -15,21 +15,9 @@ var signal_color = Color("d22d72", 1.0)
 var number_color = Color("568c3b", 1.0)
 var symbol_color = Color("6b6bb8", 1.0)
 
-func load_json_file(filepath: String):
-    if FileAccess.file_exists(filepath):
-        var json_string = FileAccess.get_file_as_string(filepath)
-        var json = JSON.new()
-        var error = json.parse(json_string)
-        if error == OK:
-            return json.data
-        else:
-            Logger.error("JSON Parse Error: " + json.get_error_message() + " in " + json_string + " at line " + json.get_error_line())
-    else:
-        Logger.error("File not exists: %s" % filepath)
-
 
 func _ready():
-    snippets_dict = load_json_file(highlight_and_snippet_file)
+    snippets_dict = Util.load_json_file(highlight_and_snippet_file)
 
     # 关键词高亮
     for color_string in highlight_dict:
@@ -76,7 +64,7 @@ func update_current_completion_options(word: String):
         update_code_completion_options(false)
         return
 
-    for key in snippets_dict["keywords"]:
+    for key in snippets_dict["keywords"] + Util.BUILT_IN_METHOD_IN_SIGNAL:
         if key.matchn(word + "*"):
             add_code_completion_option(CodeCompletionKind.KIND_PLAIN_TEXT, key, key, Color.GRAY)
 
