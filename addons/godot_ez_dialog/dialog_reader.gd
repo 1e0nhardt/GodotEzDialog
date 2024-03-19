@@ -21,9 +21,13 @@ func _process(delta):
     if is_running:
         var response = DialogResponse.new()
         while is_running:
+            if response.should_pause:
+                is_running = false
+                break
+                
             if executing_command_stack.is_empty():
                 is_running = false
-                if pending_choice_actions.is_empty():
+                if pending_choice_actions.is_empty() and response.text.is_empty():
                     response.eod_reached = true
                 break
 
@@ -91,14 +95,18 @@ func _process_command(command: DialogCommand, response: DialogResponse):
         var actions: Array[DialogCommand] = []
         var prompt: String = _inject_variable_to_text(command.values[0])
         actions.append_array(command.children)
+        # 标记PROMPT中的GOTO。
+        for cmd in command.children:
+            if cmd.type == DialogCommand.Type.GOTO:
+                cmd.values.append("prompt_goto")
         response.append_choice(prompt.strip_edges())
         pending_choice_actions.push_back(actions)
     elif command.type == DialogCommand.Type.GOTO: # 获取并解析目标节点，用新的命令流取代老的。
         var destination_node = processing_dialog.get_node_by_name(command.values[0])
         executing_command_stack = destination_node.get_parse()
         dialog_visit_history.push_front(destination_node.name)
-        if command.values[-1] == "conditional_goto": # 条件分支中的goto，添加page break
-            is_running = false
+        if command.values.size() == 1: # 没有添加prompt_goto标记
+            response.should_pause = true
         if dialog_visit_history.size() > history_stack_size:
             dialog_visit_history.remove_at(-1)
     elif command.type == DialogCommand.Type.IF or command.type == DialogCommand.Type.ELIF: # 表达式估值，丢弃目标命令
@@ -109,9 +117,9 @@ func _process_command(command: DialogCommand, response: DialogResponse):
                 (executing_command_stack[0].type == DialogCommand.Type.ELSE
                 or executing_command_stack[0].type == DialogCommand.Type.ELIF)):
                 executing_command_stack.pop_front()
-            _queue_executing_commands(command.children, true)
+            _queue_executing_commands(command.children)
     elif command.type == DialogCommand.Type.ELSE:
-        _queue_executing_commands(command.children, true)
+        _queue_executing_commands(command.children)
 
 
 # 将${var}替换为变量值 用正则匹配所有var，然后从_state_refence(用户传入)从读值。
@@ -134,14 +142,10 @@ func _inject_variable_to_text(text: String):
 
 
 # 将if-else {}内的子命令加入执行队列
-func _queue_executing_commands(commands: Array[DialogCommand], mark_conditional_goto = false):
+func _queue_executing_commands(commands: Array[DialogCommand]):
     var copy = commands.duplicate(true)
     copy.append_array(executing_command_stack)
     executing_command_stack = copy
-    if mark_conditional_goto:
-        for cmd in executing_command_stack:
-            if cmd.type == DialogCommand.Type.GOTO:
-                cmd.values.append("conditional_goto")
 
 
 func _evaluate_conditional_expression(expression: String):
