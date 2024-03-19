@@ -24,7 +24,7 @@ func _init(t: String):
         signal_end_regex.compile("\\)")
         line_end_regex.compile("\\n")
         colon_regex.compile(":")
-        spacial_token_regex.compile("(if|elif|else|endif|\\- |signal\\(|\\->|:\\n)")
+        spacial_token_regex.compile("(if|elif|else|endif|\\-\\-\\-|\\- |signal\\(|\\->|:\\n)")
 
 
 func advance(len=1):
@@ -78,7 +78,11 @@ func collect_characters_then_advance(terminating: RegEx):
         advance(match_length)
     else:
         result = text.substr(pos)
-        advance_to_next_line()
+        # advance_to_next_line() 
+        # to End
+        pos = len(text)
+        current_char = ""
+
 
     return result.strip_edges()
 
