@@ -1,0 +1,242 @@
+[
+    {
+        "commands_raw": "本游戏含有黑暗与不适的内容\n心脏疾病患者与精神创伤者可能不适合游玩。\n- 开始游戏 -> 语言选项\n",
+        "name": "start",
+        "position": [
+            20,
+            180
+        ]
+    },
+    {
+        "commands_raw": "- 中文 -> 领养宠物\n- 日本语 -> 我不吃日语\n- 英语 -> 说不了英语 ",
+        "name": "语言选项",
+        "position": [
+            200,
+            180
+        ]
+    },
+    {
+        "commands_raw": "要领养一只电子小鲨鱼吗？\nsignal(set,apple_count,0)\nsignal(set,barbell_count,0)\nsignal(set,smell_count,0)\nsignal(set,sleep_count,0)\nif last_end==1:\n    signal(set,end_1,true)\nelif last_end==2:\n    signal(set,end_2,true)\nelif last_end==2:\n    signal(set,end_2,true)\nelif last_end==3:\n    signal(set,end_3,true)\nelif last_end==4:\n    signal(set,end_4,true)\nelif last_end==5:\n    signal(set,end_5,true)\nelif last_end==6:\n    signal(set,end_6,true)\nelif last_end==7:\n    signal(set,end_7,true)\nelif last_end==8:\n    signal(set,end_8,true)\nelif last_end==9:\n    signal(set,end_9,true)\nelif last_end==10:\n    signal(set,end_10,true)\nelif last_end==11:\n    signal(set,end_11,true)\nendif\n- 好的 -> 给我苹果\n- 不要 -> 确定不要？\n",
+        "name": "领养宠物",
+        "position": [
+            340,
+            180
+        ]
+    },
+    {
+        "commands_raw": "日本语は食べません -> 语言选项",
+        "name": "我不吃日语",
+        "position": [
+            260,
+            280
+        ]
+    },
+    {
+        "commands_raw": "I can't speak English. -> 语言选项",
+        "name": "说不了英语",
+        "position": [
+            120,
+            280
+        ]
+    },
+    {
+        "commands_raw": "真的要放弃领养电子小鲨鱼吗？\nif end_3:\n    signal(set,to_end_9,true)\n    - 是的(红色) -> 主场景\nelse:\n    - 是的 -> 结局11\nendif\n- 取消 -> 领养宠物",
+        "name": "确定不要？",
+        "position": [
+            320,
+            60
+        ]
+    },
+    {
+        "commands_raw": "if to_end_9:\n    - 去屋外 -> 屋外\nelse:\n    if barbell_count==0:\n        - 投喂1个苹果 -> signal(add,apple_count,1) 吃苹果\n        - 投喂10个苹果 -> signal(add,apple_count,10) 吃苹果\n    endif\n    if apple_count==0:\n        - 只给看，不给吃 -> signal(add,smell_count,1)不给苹果\n    endif\n    if last_end==1:\n        - 一个奇怪的鲨鱼方块 -> 结局2\n    endif\n    if apple_count>0:\n   \t    - 举哑铃 -> signal(add,barbell_count,1) 举哑铃\n    endif\n    if barbell_count>0:\n        if !sleep_enough:\n            - 睡一会 -> signal(add,sleep_count,1) 睡大觉\n        endif\n        - 去屋外 -> 屋外\n    endif\n    if has_flower:\n        if light_on:\n            if shark_has_flower:\n                - 关灯 -> 有花关灯\n            else:\n                - 关灯 -> 无花关灯\n            endif\n        else:\n            - 开灯 -> 主场景\n        endif\n        - 把花送给小鲨鱼 -> 开灯有花\n    endif\n    if sleep_enough:\n        - 感觉小鲨鱼不需要再睡了 -> 结局6\n    endif\n    - 点击小黄鸭 -> 鸭叫\nendif",
+        "name": "主场景",
+        "position": [
+            580,
+            180
+        ]
+    },
+    {
+        "commands_raw": "你通关啦！\n结局11\n与你无关的事物\n\n- 重新开始 -> signal(set,end_11,true) signal(set,last_end_1,false) 领养宠物",
+        "name": "结局11",
+        "position": [
+            220,
+            -40
+        ]
+    },
+    {
+        "commands_raw": "吃了${apple_count}个苹果\nif apple_count==1:\n\t好好吃哦，谢谢你！\nelif apple_count==2:\n\t我爱吃苹果！\nelif apple_count==3:\n\t嗯？鲨鱼应该吃鱼肉？\nelif apple_count==4:\n\t鲨鱼吃苹果也很正常嘛\nelif apple_count==5:\n\t吃的很满足啦\nelif apple_count==6:\n\t我会不会吃胖了？\nelif apple_count==7:\n\t好想锻炼一下消消食啊\nelif apple_count==8:\n\t糟了，好像身体卡住了\nelif apple_count==9:\n\t真的不能再吃了\nelif apple_count==10:\n\t啊？！我怎么完全变成方块了\nendif\n\nif apple_count<10:\n    -> 主场景\nelse:\n    -> 结局1\nendif\n\n\n\n\n\n\n",
+        "name": "吃苹果",
+        "position": [
+            660,
+            100
+        ]
+    },
+    {
+        "commands_raw": "你通关啦！\n结局1\n胖胖鲨\n\n- 重新开始 -> signal(set,last_end,1) 领养宠物",
+        "name": "结局1",
+        "position": [
+            740,
+            20
+        ]
+    },
+    {
+        "commands_raw": "啪叽 -> 主场景",
+        "name": "鸭叫",
+        "position": [
+            580,
+            60
+        ]
+    },
+    {
+        "commands_raw": "啊！你是……！\n---\n如果你不想变成我这副样子\n---\n就快点逃吧\n---\n难道你是被喂成……\n---\n快离开这恶劣的主人\n---\n不然你也有危险\n---\n我……好吧！\n---\n你通关啦！\n结局2\n口碑太差的饲主\n\n- 重新开始 -> signal(set,last_end,2) 领养宠物",
+        "name": "结局2",
+        "position": [
+            840,
+            80
+        ]
+    },
+    {
+        "commands_raw": "举了${barbell_count}次哑铃\nif barbell_count==1:\n\t瘦下来喽\nelif barbell_count==2:\n\t这个东西是哑铃吗？\nelif barbell_count==3:\n\t鲨鱼也要健身吗？\nelif barbell_count==4:\n\t我要是去游泳，算不算健身？\nelif barbell_count==5:\n\t我可以去海里帮你抓鱼！\nelif barbell_count==6:\n\t我是超级肌肉鲨！\nelif barbell_count==7:\n\t身上有点酸痛，是正常的吗？\nelif barbell_count==8:\n\t身体有点痛，而且有点困\nelif barbell_count==9:\n\t可以让我休息吗？\nelif barbell_count==10:\n\t我……(杠铃落地声)\nendif\n\nif barbell_count<10:\n    -> 主场景\nelse:\n    -> 结局5\nendif\n",
+        "name": "举哑铃",
+        "position": [
+            780,
+            160
+        ]
+    },
+    {
+        "commands_raw": "if smell_count==1:\n\t我闻到甜甜的香味了\nelif smell_count==2:\n\t好饿哦\nelif smell_count==3:\n\t可以给我苹果吗？\n    ---\n    拜托？\nelif smell_count==4:\n\t明明苹果就在这么近的地方，就差一点就可以吃到了\n    ---\n    可以帮帮我吗\nelif smell_count==5:\n\t为什么无动于衷呢？\n    ---\n    莫非……其实你讨厌我？\nelif smell_count==6:\n\t照料宠物让你感到很枯燥吗？\nelif smell_count==7:\n\t抱歉\n    ---\n    如果我不是给人带来麻烦的宠物就好了\nelif smell_count==8:\n\t好饿，要饿晕了\nelif smell_count==9:\n\t苹果是属于你的\n    我没办法吃到\nelif smell_count==10:\n\t唉\n    ---\n    再见了\n    ---\n    我要出门去找食物吃了\nendif\n\nif smell_count<10:\n    -> 主场景\nelse:\n    -> 结局3\nendif",
+        "name": "不给苹果",
+        "position": [
+            400,
+            340
+        ]
+    },
+    {
+        "commands_raw": "你通关啦！\n结局3\n流浪的鲨鱼\n- 重新开始 -> signal(set,last_end,3) 领养宠物",
+        "name": "结局3",
+        "position": [
+            380,
+            460
+        ]
+    },
+    {
+        "commands_raw": "if !end_9:\n    你好\n    我想吃苹果! -> 主场景\nendif",
+        "name": "给我苹果",
+        "position": [
+            460,
+            180
+        ]
+    },
+    {
+        "commands_raw": "if to_end_9:\n    有一个流浪的小鲨鱼！\n    - 跟我走 -> 结局9前置\nelse:\n    if has_flower && show_letter:\n        有一封信\n        - 读读看 -> 信\n    else:\n        if !has_flower:\n            有一朵花\n        else:\n            花已经被摘下了\n        endif\n        if end_3 && has_flower:\n            你明明看见我了\n            signal(set,show_letter,true)\n        elif end_3:\n            ---\n            有一个流浪的小鲨鱼！\n            - 跟我走 -> 结局7\n        endif\n    endif\n\n    if !has_flower:\n        - 摘下花 -> signal(set,has_flower,true) 屋外\n    endif\n    - 回去 -> 主场景\nendif",
+        "name": "屋外",
+        "position": [
+            800,
+            260
+        ]
+    },
+    {
+        "commands_raw": "是我的存在让你困扰了吗？\n没关系，我会离开的。\n- 回去 -> 主场景",
+        "name": "信",
+        "position": [
+            920,
+            240
+        ]
+    },
+    {
+        "commands_raw": "你通关啦\n结局5\n被视作无用的鲨鱼\n\n- 重新开始 -> signal(set,last_end,4) 领养宠物",
+        "name": "结局4",
+        "position": [
+            500,
+            420
+        ]
+    },
+    {
+        "commands_raw": "哇！好黑！\n---\n是你关了灯吗？\n---\n其实……\n我有点怕黑\n---\n可以开灯吗？\n---\n拜托！可以先开个灯吗？\n---\n我真的非常非常害怕关灯\n---\n要是关灯太久的话\n---\n求……求你了\n快开灯吧\n---\n是我哪里做的不好让你觉得无趣了吗？\n真的这么讨厌看到我吗？\n---\n我会尽力让你开心的\n可以开灯吗？\n---\n她的眼睛看到我了\n我会被当做无趣的没用的\n连让人开心都做不到的鲨鱼\n---\n她会注意到我的失职\n然后把我……\n---\n拜托！拜托！\n时间不多了\n---\n求求你开灯吧\n再这样下去我会\n---\n啊……她已经看到我了\n她来了\n---\n求求你放过我\n我还可以继续运转\n我真的没有出错\n---\n再给我一次机会\n我一定可以 \n\n-> 结局4\n\n\n",
+        "name": "无花关灯",
+        "position": [
+            520,
+            320
+        ]
+    },
+    {
+        "commands_raw": "啊…… -> 结局8",
+        "name": "有花关灯",
+        "position": [
+            720,
+            360
+        ]
+    },
+    {
+        "commands_raw": "好漂亮的花！谢谢你\n---\n我听说这朵花非常需要光照\n---\n光照能给它提供足够的养分\n---\n只要开着灯\n它就不需要其他营养了\n---\n很方便吧\n\n-> 主场景",
+        "name": "开灯有花",
+        "position": [
+            640,
+            320
+        ]
+    },
+    {
+        "commands_raw": "你通关啦\n结局8\n成为养料的鲨鱼\n\n- 重新开始 -> signal(set,last_end,8) 领养宠物",
+        "name": "结局8",
+        "position": [
+            840,
+            460
+        ]
+    },
+    {
+        "commands_raw": "你通关啦\n结局5\n被视作无用的鲨鱼\n\n- 重新开始 -> signal(set,last_end,5) 领养宠物",
+        "name": "结局5",
+        "position": [
+            980,
+            120
+        ]
+    },
+    {
+        "commands_raw": "睡了${sleep_count}次大觉\nif sleep_count==1:\n\t神清气爽！\nelif sleep_count==2:\n\t我刚梦见自己被吃得只剩鱼骨了\n    吓死我了\nelif sleep_count==3:\n\t快睡着时，腿突然抽搐一下是为什么呢？\n    ---\n    嗯？\n    我没有腿？\nelif sleep_count==4:\n\t我睡觉时有冒泡泡吗？\nelif sleep_count==5:\n\t你不会一直在盯着我睡觉吧?\nelif sleep_count==6:\n\t完全睡饱啦！\n    我不困\n    signal(set,sleep_enough,true)\nendif\n\nif barbell_count<6:\n    -> 主场景\nelse:\n    -> 结局6\nendif\n\n",
+        "name": "睡大觉",
+        "position": [
+            1000,
+            220
+        ]
+    },
+    {
+        "commands_raw": "啊！你把重要的东西删掉了！\n---\n我这辈子都没办法睡觉了\n---\n怎么办……\n---\n\n你通关啦！\n结局6\n失眠的鲨鱼\n\n- 重新开始 -> signal(set,last_end,6) 领养宠物",
+        "name": "结局6",
+        "position": [
+            1100,
+            200
+        ]
+    },
+    {
+        "commands_raw": "哇！新朋友！？\n---\n好久不见……\n我回来了……\n---\n\n你通关啦！\n结局6\n反悔的饲主\n\n- 重新开始 -> signal(set,last_end,7) 领养宠物",
+        "name": "结局7",
+        "position": [
+            1020,
+            300
+        ]
+    },
+    {
+        "commands_raw": "好久不见……\n我回来了……\n---\n我去外面寻找食物\n可是怎么找也找不到\n---\n我才意识到……\n---\n这个世界就是为了你而构建的\n---\n与你无关的事物\n---\n连存在的机会都没有\n---\n就连我……也是\n---\n我真的好害怕！\n不要丢下我\n---\n可以让我……\n留在你这里吗？\n---\n- 是 -> 结局9\n- 否 -> 结局10\n\n",
+        "name": "结局9前置",
+        "position": [
+            1060,
+            400
+        ]
+    },
+    {
+        "commands_raw": "谢谢你……您……\n谢谢您……\n---\n我……会成为一只好宠物的\n\n你通关啦！\n结局9\n破镜难圆\n\n- 重新开始 -> signal(set,last_end,9) 领养宠物",
+        "name": "结局9",
+        "position": [
+            1300,
+            400
+        ]
+    },
+    {
+        "commands_raw": "我……明白了\n---\n我会离开这里的\n---\n如果……你当初没有领养我……\n就好了……\n---\n你通关啦！\n结局10\n与你无关的事物\n\n- 重新开始 -> signal(set,last_end,9) 领养宠物",
+        "name": "结局10",
+        "position": [
+            1300,
+            460
+        ]
+    }
+]

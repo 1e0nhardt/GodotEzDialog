@@ -15,7 +15,8 @@ config/features=PackedStringArray("4.2", "Forward Plus")
 
 [autoload]
 
-Logger="*res://addons/godot_ez_dialog/logger.gd"
+Logger="*res://addons/godot_ez_dialog/util/logger.gd"
+Util="*res://addons/godot_ez_dialog/util/util.gd"
 
 [editor_plugins]
 

@@ -122,13 +122,14 @@ func get_tokens() -> Array[Token]:
         elif match_then_advance("endif"):
             tokens.push_back(Token.new(Token.Type.ENDIF, "", lineno, column))
         elif match_then_advance("signal("):
-                add_signal_tokens(tokens)
+            add_signal_tokens(tokens)
         elif match_then_advance(":\n"):
             tokens.push_back(Token.new(Token.Type.COLON, "", lineno, column))
         elif match_then_advance("->"): # -> node | -> signal()... node
             skip_space()
             while match_then_advance("signal("):
                 add_signal_tokens(tokens)
+                skip_space()
             var goto_node = collect_characters_then_advance(line_end_regex)
             tokens.push_back(Token.new(Token.Type.GOTO, goto_node, lineno, column))
         else: # 普通文本

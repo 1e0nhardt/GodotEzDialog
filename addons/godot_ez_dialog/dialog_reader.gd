@@ -24,7 +24,7 @@ func _process(delta):
             if response.should_pause:
                 is_running = false
                 break
-                
+
             if executing_command_stack.is_empty():
                 is_running = false
                 if pending_choice_actions.is_empty() and response.text.is_empty():
@@ -86,6 +86,7 @@ func _process_command(command: DialogCommand, response: DialogResponse):
             custom_signal_received.emit(signal_value)
     elif command.type == DialogCommand.Type.DISPLAY_TEXT: # 生成变量注入后的文本
         var display_text: String = _inject_variable_to_text(command.values[0].strip_edges(true,true))
+        display_text = remove_spaces_after_line_end(display_text)
         # normal text display
         response.append_text(display_text)
     elif command.type == DialogCommand.Type.PAGE_BREAK: # 停止命令处理，直接输出已处理的对话
@@ -124,7 +125,7 @@ func _process_command(command: DialogCommand, response: DialogResponse):
 
 
 # 将${var}替换为变量值 用正则匹配所有var，然后从_state_refence(用户传入)从读值。
-func _inject_variable_to_text(text: String):
+func _inject_variable_to_text(text: String) -> String:
     var required_variables: Array[String] = []
     var variable_placeholder_regex = RegEx.new()
     variable_placeholder_regex.compile("\\${(\\S+?)}")
@@ -140,6 +141,12 @@ func _inject_variable_to_text(text: String):
         final_text = final_text.replace(
             "${%s}" % variable, value)
     return final_text
+
+
+func remove_spaces_after_line_end(text: String) -> String:
+    var splits = text.split("\n") as Array
+    splits = splits.map(func(s): return s.strip_edges())
+    return "\n".join(splits)
 
 
 # 将if-else {}内的子命令加入执行队列
@@ -180,7 +187,7 @@ func built_in_signal_process(signal_value: String):
 
     if Util.BUILT_IN_METHOD_IN_SIGNAL.find(method_name) == -1:
         return false
-    
+
     if not state_reference.has(variable_name):
         Logger.warn("invalid variable name '%s', '%s' will send by signal." % [variable_name, signal_value])
         return false
@@ -204,5 +211,5 @@ func built_in_signal_process(signal_value: String):
             state_reference[variable_name] *= value
         _:
             return false
-    
+
     return true

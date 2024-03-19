@@ -6,7 +6,29 @@ extends VBoxContainer
 
 var state = {
     "foo": "bar",
-    "success": true
+    "success": true,
+    "apple_count": 0,
+    "smell_count": 0,
+    "barbell_count": 0,
+    "light_on": true,
+    "has_flower": false,
+    "show_letter": false,
+    "shark_has_flower": false,
+    "sleep_count": 0,
+    "sleep_enough": 0,
+    "last_end": -1,
+    "end_1": false,
+    "end_2": false,
+    "end_3": false,
+    "end_4": false,
+    "end_5": false,
+    "end_6": false,
+    "end_7": false,
+    "end_8": false,
+    "to_end_9": false,
+    "end_9": false,
+    "end_10": false,
+    "end_11": false,
 }
 var custom_font = preload("res://addons/godot_ez_dialog/font/smiley-sans-v2.0.1/SmileySans-Oblique.ttf")
 
@@ -53,7 +75,7 @@ func on_dialog_generated(response: DialogResponse):
         for i in response.choices.size():
             add_choice(response.choices[i], i)
     else:
-        await get_tree().create_timer(2.).timeout
+        await get_tree().create_timer(1.3).timeout
         dialog_reader.next()
 
 
