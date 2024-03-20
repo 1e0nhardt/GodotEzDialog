@@ -47,10 +47,12 @@ func clear_dialog():
 
 
 func add_text(text: String):
-    var label = Label.new()
-    label.text = text
-    label.set("theme_override_font_sizes/font_size", 28)
-    label.set("theme_override_fonts/font", custom_font)
+    var label = RichTextLabel.new()
+    label.bbcode_enabled = true
+    label.fit_content = true
+    label.text = "[center]%s[/center]" % text
+    label.set("theme_override_font_sizes/normal_font_size", 28)
+    label.set("theme_override_fonts/normal_font", custom_font)
     add_child(label)
 
 
