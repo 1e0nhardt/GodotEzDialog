@@ -22,3 +22,13 @@ func load_json_file(filepath: String):
             Logger.error("JSON Parse Error: " + json.get_error_message() + " in " + json_string + " at line " + json.get_error_line())
     else:
         Logger.error("File not exists: %s" % filepath)
+
+
+func create_style_box_flat(color: Color, corner_radius=2) -> StyleBoxFlat:
+    var style_box_flat = StyleBoxFlat.new()
+    style_box_flat.bg_color = color
+    style_box_flat.corner_radius_top_left = corner_radius
+    style_box_flat.corner_radius_top_right = corner_radius
+    style_box_flat.corner_radius_bottom_left = corner_radius
+    style_box_flat.corner_radius_bottom_right = corner_radius
+    return style_box_flat
