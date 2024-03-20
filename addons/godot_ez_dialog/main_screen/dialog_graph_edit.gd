@@ -57,11 +57,6 @@ func add_graph_node(dialog_node: DialogNode, focus = false, position = null):
     graph_node.name = dialog_node.name
     add_child(graph_node)
 
-    # 设置单一节点被选中
-    if focus:
-        set_selected(null)
-    graph_node.selected = focus
-
      # 向节点中添加组件。每增加一个组件可以使用的slot就多一个。
     # var label = Label.new()
     # label.text = ""
@@ -88,6 +83,13 @@ func add_graph_node(dialog_node: DialogNode, focus = false, position = null):
     else:
         # 设置节点位置 (+scroll_offset相当于以视口左上角为锚点定位)
         graph_node.position_offset = scroll_offset + size*0.5 + Vector2(20, 20)
+
+    reconnect_valid_connection(graph_node.name)
+
+    # 设置单一节点被选中
+    if focus:
+        set_selected(null)
+    graph_node.selected = focus
 
     # theme
     # graph_node.set("theme_override_styles/panel", preload("res://play/test_graph_edit.tres"))
@@ -126,12 +128,34 @@ func process_node_outgoing_connections(dialog_node: DialogNode):
             connect_node(dialog_node.name, 0, out_node, 0)
 
 
+func color_node_connections(node: Node, in_color: Color, out_color: Color):
+    node.set_slot_color_left(0, in_color)
+    node.set_slot_color_right(0, out_color)
+
+    var in_conns = node.get_meta("input_connections")
+    var out_conns = node.get_meta("output_connections")
+    var gnode: GraphNode
+    for gname in in_conns:
+        if has_node(NodePath(gname)) and gname != node.name:
+            gnode = get_node(NodePath(gname)) as GraphNode
+            #gnode.set_slot_enabled_right(0, true)
+            gnode.set_slot_color_right(0, in_color)
+
+    for gname in out_conns:
+        if has_node(NodePath(gname)) and gname != node.name:
+            gnode = get_node(NodePath(gname))
+            #gnode.set_slot_enabled_left(0, true)
+            gnode.set_slot_color_left(0, out_color)
+
+
 func select_node(node: Node):
     selected_nodes.push_front(node)
+    color_node_connections(node, Color.CORNFLOWER_BLUE, Color.LIGHT_GREEN)
 
 
 func deselect_node(node: Node):
     selected_nodes.erase(node)
+    color_node_connections(node, Color.WHITE, Color.WHITE)
 
 
 func remove_node(node: Node):

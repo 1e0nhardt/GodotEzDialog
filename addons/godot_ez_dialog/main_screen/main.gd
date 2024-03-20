@@ -57,11 +57,14 @@ func reset():
     is_dirty = false
 
 
-func add_node(node_name = "Dialog Node"):
+func add_node(node_name = "Dialog Node", position = null):
     var dialog_node = DialogNode.new()
     dialog_node.name = dialog_resource.validate_name(node_name)
     dialog_resource.add_dialog_node(dialog_node)
-    dialog_graph_edit.add_graph_node(dialog_node, true)
+    if position:
+        dialog_graph_edit.add_graph_node(dialog_node, true, position)
+    else:
+        dialog_graph_edit.add_graph_node(dialog_node, true)
 
 
 func update_parse(old_name = ""):
@@ -222,7 +225,8 @@ func _on_dialog_edit_symbol_lookup(symbol:String, line:int, column:int):
         var goto_node = dialog_graph_edit.get_node(NodePath(symbol))
         dialog_graph_edit.set_selected(goto_node)
     else:
-        add_node(symbol)
+        var editing_node = dialog_graph_edit.selected_nodes[0]
+        add_node(symbol, editing_node.position_offset + Vector2(editing_node.size.x + 40, 0))
         dialog_graph_edit.reconnect_valid_connection(symbol)
 
 
